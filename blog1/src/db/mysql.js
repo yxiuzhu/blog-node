@@ -23,5 +23,7 @@ function exec(sql) {
 }
 
 module.exports = {
-  exec
+  exec,
+  // escape是mysql原生提供的函数
+  escape: mysql.escape
 }
