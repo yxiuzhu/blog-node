@@ -3,7 +3,7 @@ const { exec,escape } = require('../db/mysql')
 const { genPassword } = require('../utils/cryp')
 
 const login = (username, password) => {
-  // escape防止sql注入
+  // mysql模块自带的escape函数：转义的作用，用于防止sql注入
   username = escape(username)
   
   // 生成加密密码

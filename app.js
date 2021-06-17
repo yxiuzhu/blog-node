@@ -7,6 +7,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 // 用于自动生成日志：需要一些配置
 var logger = require('morgan');
+// 解析session
+const session = require('express-session')
 
 // var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
@@ -31,6 +33,15 @@ app.use(cookieParser());
 
 // 处理一些静态文件
 // app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret: 'WJiol#23123_',
+  cookie: {
+    // path: '/',  //默认配置
+    // httpOnly: true,  //默认配置
+    maxAge: 24 * 60 * 60 * 1000
+  }
+}))
 
 // 注册路由：根路由
 // app.use('/', indexRouter);
