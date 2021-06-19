@@ -3,6 +3,7 @@ var createError = require('http-errors');
 var express = require('express');
 // nodejs里的路径
 var path = require('path');
+var fs = require('fs')
 // 解析cookie：可以通过req.cookie获取cookie
 var cookieParser = require('cookie-parser');
 // 用于自动生成日志：需要一些配置
@@ -24,7 +25,20 @@ var app = express();
 // app.set('view engine', 'jade');
 
 // 使用日志记录
-app.use(logger('dev'));
+const ENV = process.env.NODE_ENV
+if (ENV !== 'production') {
+  // 开发环境 / 测试环境：log打印在控制台
+  app.use(logger('dev'))
+} else {
+  // 线上环境：将文件写入access.log文件
+  const logFileName = path.join(__dirname, 'logs', 'access.log')
+  const writeStream = fs.createWriteStream(logFileName, {
+    flags: 'a'
+  })
+  app.use(logger('combined', {
+    stream: writeStream
+  }));
+}
 // 原来 getPostData 的功能
 app.use(express.json());
 // 解析其他的数据格式：x-wwww-form-urlcoded
@@ -57,12 +71,12 @@ app.use('/api/blog', blogRouter);
 app.use('/api/user', userRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'dev' ? err : {};
